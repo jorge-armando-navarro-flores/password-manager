@@ -4,25 +4,31 @@ from random import choice, randint, shuffle
 import pyperclip
 import json
 
+# ---------------------------- FIND PASSWORD ------------------------------- #
+
+
 def find_password():
-    to_search = website_input.get()
+    website = website_input.get()
     try:
         with open("data.json", "r") as data_file:
             data = json.load(data_file)
-        item = data[to_search]
     except FileNotFoundError:
-        messagebox.showerror(title="File don't found", message="Please add a password!")
-    except KeyError:
-        messagebox.showinfo(title="Oops", message="Key dont found!")
+        messagebox.showerror(title="Error", message="No data file Found.")
     else:
-        messagebox.showinfo(title="Oops", message="found!")
+        if website in data:
+            email = data[website]["email"]
+            password = data[website]["password"]
+            messagebox.showinfo(title=website, message=f"User: {email} \nPassword: {password}")
+        else:
+            messagebox.showinfo(title="Error", message=f"No details for {website} exist.")
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
-#Password Generator Project
 
 
 def generate_password():
-    letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+    letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
+               'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+               'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
     numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
     symbols = ['!', '#', '$', '%', '&', '(', ')', '*', '+']
 
@@ -61,21 +67,22 @@ def save():
         try:
             with open("data.json", "r") as data_file:
 
-                #Reading old data
+                # Reading old data
                 data = json.load(data_file)
-                #Updating old data with new data
+                # Updating old data with new data
                 data.update(new_data)
         except FileNotFoundError:
             data = new_data
 
         with open("data.json", "w") as data_file:
-            #Saving updated data
+            # Saving updated data
             json.dump(data, data_file, indent=4)
 
             website_input.delete(0, END)
             password_input.delete(0, END)
 
 # ---------------------------- UI SETUP ------------------------------- #
+
 
 window = Tk()
 window.title("Password Manager")
@@ -86,7 +93,7 @@ padlock_img = PhotoImage(file="logo.png")
 canvas.create_image(100, 100, image=padlock_img)
 canvas.grid(column=1, row=0)
 
-#Labels
+# Labels
 website_label = Label(text="Website:")
 website_label.grid(column=0, row=1)
 
@@ -97,9 +104,7 @@ password_label = Label(text="Password:")
 password_label.grid(column=0, row=3)
 
 
-
-
-#Entries
+# Entries
 website_input = Entry(width=25)
 website_input.grid(column=1, row=1)
 website_input.focus()
@@ -111,7 +116,7 @@ user_input.insert(0, "user@email.com")
 password_input = Entry(width=25)
 password_input.grid(column=1, row=3)
 
-#Buttons
+# Buttons
 
 search_button = Button(text="Search", width=16, command=find_password)
 search_button.grid(column=2, row=1)
